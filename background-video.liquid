@@ -1,0 +1,113 @@
+<div class="background-video-container">
+  {% if template == 'index' %}
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      id="myVideo"
+      class="ss-videobg"
+    >
+      <source src="{{ section.settings.home_video_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  {% elsif template == 'page' and page.handle == 'johndoe' %}
+    <video
+      autoplay
+      muted
+      loop
+      playsinline
+      id="myVideo"
+      class="ss-videobg"
+    >
+      <source src="{{ section.settings.johndoe_video_url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Background Video",
+  "settings": [
+    {
+      "type": "url",
+      "id": "home_video_url",
+      "label": "Home Page Video URL",
+      "info": "Enter a direct link to an MP4 video file for the home page"
+    },
+    {
+      "type": "url",
+      "id": "johndoe_video_url",
+      "label": "John Doe Page Video URL",
+      "info": "Enter a direct link to an MP4 video file for the John Doe page"
+    },
+    {
+      "type": "range",
+      "id": "video_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Video Opacity",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Background Video",
+      "category": "Video"
+    }
+  ]
+}
+{% endschema %}
+
+{% style %}
+  .background-video-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+  }
+
+  .ss-videobg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    z-index: -1;
+    opacity: {{ section.settings.video_opacity | divided_by: 100.0 }};
+    transition: opacity 0.5s ease-in-out;
+  }
+{% endstyle %}
+
+{% javascript %}
+  document.addEventListener('DOMContentLoaded', function() {
+    var video = document.getElementById('myVideo');
+    if (video) {
+      video.play().catch(function(error) {
+        console.log('Auto-play was prevented:', error);
+      });
+
+      // Ensure video is visible
+      video.style.display = 'block';
+
+      // Log video properties for debugging
+      console.log('Video properties:', {
+        src: video.currentSrc,
+        readyState: video.readyState,
+        networkState: video.networkState,
+        error: video.error
+      });
+    } else {
+      console.log('Video element not found');
+    }
+  });
+{% endjavascript %}
